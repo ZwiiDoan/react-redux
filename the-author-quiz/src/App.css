@@ -42,6 +42,7 @@
 
 .authorimage {
   max-height: 100%;
+  max-width: 100%;
 }
 
 .answer {
@@ -55,4 +56,8 @@
 
 .answer:hover {
   background-color: #D0E3F0;
+}
+
+.continue {
+  padding: 20px 0 0 0;
 }

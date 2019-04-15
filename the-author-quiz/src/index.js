@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter, Route, withRouter} from 'react-router-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import AuthorQuiz from './AuthorQuiz';
+import AddAuthorForm from './AddAuthorForm';
 import {shuffle, sample} from 'underscore';
 
 const authors = [
@@ -60,12 +62,57 @@ function getTurnData(authors) {
     }
 }
 
-const state = {
-    turnData: getTurnData(authors)
+function resetState() {
+    return {
+      turnData: getTurnData(authors),
+      highlight: 'none'
+    }
 }
 
-ReactDOM.render(<AuthorQuiz {...state}/>, document.getElementById('root'));
+let state = resetState();
 
+function onAnswerSelected(answer) {
+  const isCorrect = state.turnData.author.books.some((book ) => book === answer);
+  state.highlight = isCorrect ? 'correct' : 'wrong';
+  render();
+}
+
+function onAddAuthor(author, history) {
+  authors.push(author);
+  history.push('/');
+}
+
+function onContinue() {
+  state = resetState();
+  render();
+}
+
+function App() {
+  return (
+    <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} onContinue={onContinue}/>
+  );
+}
+
+const AuthorWrapper = withRouter(({history}) =>
+  <AddAuthorForm onAddAuthor={(author) => {
+    onAddAuthor(author, history);
+  }}/>
+);
+
+function render() {
+  ReactDOM.render(
+    <BrowserRouter>
+      <React.Fragment>
+        <Route exact path="/" component={App}/>
+        <Route path="/add" component={AuthorWrapper}/>
+      </React.Fragment>
+    </BrowserRouter>, document.getElementById('root')
+  )
+
+  console.log(authors);
+}
+
+render();
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
