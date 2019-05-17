@@ -1,85 +1,85 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {BrowserRouter, Route, withRouter} from 'react-router-dom';
-import './index.css';
-import * as serviceWorker from './serviceWorker';
-import AuthorQuiz from './AuthorQuiz';
-import AddAuthorForm from './AddAuthorForm';
-import {shuffle, sample} from 'underscore';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Route, withRouter } from "react-router-dom";
+import "./index.css";
+import * as serviceWorker from "./serviceWorker";
+import AuthorQuiz from "./AuthorQuiz";
+import AddAuthorForm from "./AddAuthorForm";
+import { shuffle, sample } from "underscore";
 
 const authors = [
-    {
-      name: 'Mark Twain',
-      imageUrl: 'images/authors/marktwain.jpg',
-      imageSource: 'Wikimedia Commons',
-      books: ['The Adventures of Huckleberry Finn']
-    },
-    {
-      name: 'Joseph Conrad',
-      imageUrl: 'images/authors/josephconrad.png',
-      imageSource: 'Wikimedia Commons',
-      books: ['Heart of Darkness']
-    },
-    {
-      name: 'J.K. Rowling',
-      imageUrl: 'images/authors/jkrowling.jpg',
-      imageSource: 'Wikimedia Commons',
-      imageAttribution: 'Daniel Ogren',
-      books: ['Harry Potter and the Sorcerers Stone']
-    },
-    {
-      name: 'Stephen King',
-      imageUrl: 'images/authors/stephenking.jpg',
-      imageSource: 'Wikimedia Commons',
-      imageAttribution: 'Pinguino',
-      books: ['The Shining', 'IT']
-    },
-    {
-      name: 'Charles Dickens',
-      imageUrl: 'images/authors/charlesdickens.jpg',
-      imageSource: 'Wikimedia Commons',
-      books: ['David Copperfield', 'A Tale of Two Cities']
-    },
-    {
-      name: 'William Shakespeare',
-      imageUrl: 'images/authors/williamshakespeare.jpg',
-      imageSource: 'Wikimedia Commons',
-      books: ['Hamlet', 'Macbeth', 'Romeo and Juliet']
-    }
+  {
+    name: "Mark Twain",
+    imageUrl: "images/authors/marktwain.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["The Adventures of Huckleberry Finn"]
+  },
+  {
+    name: "Joseph Conrad",
+    imageUrl: "images/authors/josephconrad.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["Heart of Darkness"]
+  },
+  {
+    name: "J.K. Rowling",
+    imageUrl: "images/authors/jkrowling.jpg",
+    imageSource: "Wikimedia Commons",
+    imageAttribution: "Daniel Ogren",
+    books: ["Harry Potter and the Sorcerers Stone"]
+  },
+  {
+    name: "Stephen King",
+    imageUrl: "images/authors/stephenking.jpg",
+    imageSource: "Wikimedia Commons",
+    imageAttribution: "Pinguino",
+    books: ["The Shining", "IT"]
+  },
+  {
+    name: "Charles Dickens",
+    imageUrl: "images/authors/charlesdickens.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["David Copperfield", "A Tale of Two Cities"]
+  },
+  {
+    name: "William Shakespeare",
+    imageUrl: "images/authors/williamshakespeare.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["Hamlet", "Macbeth", "Romeo and Juliet"]
+  }
 ];
 
 function getTurnData(authors) {
-    const allBooks = authors.reduce(function (result,author,index) {
-        return result.concat(author.books);
-    }, []);
-    
-    const fourRandomBooks = shuffle(allBooks).slice(0,4);
-    const answer = sample(fourRandomBooks);
+  const allBooks = authors.reduce(function(result, author, index) {
+    return result.concat(author.books);
+  }, []);
 
-    return {
-        books: fourRandomBooks,
-        author: authors.find((author) => author.books.some((title) => title === answer))
-    }
+  const fourRandomBooks = shuffle(allBooks).slice(0, 4);
+  const answer = sample(fourRandomBooks);
+
+  return {
+    books: fourRandomBooks,
+    author: authors.find(author => author.books.some(title => title === answer))
+  };
 }
 
 function resetState() {
-    return {
-      turnData: getTurnData(authors),
-      highlight: 'none'
-    }
+  return {
+    turnData: getTurnData(authors),
+    highlight: "none"
+  };
 }
 
 let state = resetState();
 
 function onAnswerSelected(answer) {
-  const isCorrect = state.turnData.author.books.some((book ) => book === answer);
-  state.highlight = isCorrect ? 'correct' : 'wrong';
+  const isCorrect = state.turnData.author.books.some(book => book === answer);
+  state.highlight = isCorrect ? "correct" : "wrong";
   render();
 }
 
 function onAddAuthor(author, history) {
   authors.push(author);
-  history.push('/');
+  history.push("/");
 }
 
 function onContinue() {
@@ -89,25 +89,32 @@ function onContinue() {
 
 function App() {
   return (
-    <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} onContinue={onContinue}/>
+    <AuthorQuiz
+      {...state}
+      onAnswerSelected={onAnswerSelected}
+      onContinue={onContinue}
+    />
   );
 }
 
-const AuthorWrapper = withRouter(({history}) =>
-  <AddAuthorForm onAddAuthor={(author) => {
-    onAddAuthor(author, history);
-  }}/>
-);
+const AuthorWrapper = withRouter(({ history }) => (
+  <AddAuthorForm
+    onAddAuthor={author => {
+      onAddAuthor(author, history);
+    }}
+  />
+));
 
 function render() {
   ReactDOM.render(
     <BrowserRouter>
       <React.Fragment>
-        <Route exact path="/" component={App}/>
-        <Route path="/add" component={AuthorWrapper}/>
+        <Route exact path="/" component={App} />
+        <Route path="/add" component={AuthorWrapper} />
       </React.Fragment>
-    </BrowserRouter>, document.getElementById('root')
-  )
+    </BrowserRouter>,
+    document.getElementById("root")
+  );
 
   console.log(authors);
 }
