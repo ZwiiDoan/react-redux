@@ -33,16 +33,23 @@ class CoursesPage extends React.Component {
       <>
         {this.state.redirectToManageCoursePage && <Redirect to="/course" />}
         <h2>Courses</h2>
-        <Spinner />
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => this.setState({ redirectToManageCoursePage: true })}
-          style={{ marginBottom: 20 }}
-        >
-          Add Course
-        </button>
-        <CourseList courses={this.props.courses} />
+        {this.props.loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() =>
+                this.setState({ redirectToManageCoursePage: true })
+              }
+              style={{ marginBottom: 20 }}
+            >
+              Add Course
+            </button>
+            <CourseList courses={this.props.courses} />
+          </>
+        )}
       </>
     );
   }
@@ -51,7 +58,8 @@ class CoursesPage extends React.Component {
 CoursesPage.propTypes = {
   actions: PropTypes.object.isRequired,
   courses: PropTypes.array.isRequired,
-  authors: PropTypes.array.isRequired
+  authors: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
@@ -67,7 +75,8 @@ function mapStateToProps(state) {
               ).name
             };
           }),
-    authors: state.authors
+    authors: state.authors,
+    loading: state.apiCallsInProgress > 0
   };
 }
 
