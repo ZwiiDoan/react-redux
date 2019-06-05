@@ -9,7 +9,7 @@ export function loadCourseSuccess(courses) {
   };
 }
 
-export function saveCourseSuccess(course) {
+export function createCourseSuccess(course) {
   return {
     type: types.CREATE_COURSE_SUCCESS,
     course
@@ -38,7 +38,7 @@ export function saveCourse(course) {
       .then(savedCourse => {
         course.id
           ? dispatch(updateCourseSuccess(savedCourse))
-          : dispatch(saveCourseSuccess(savedCourse));
+          : dispatch(createCourseSuccess(savedCourse));
       })
       .catch(error => {
         dispatch(apiCallError());
